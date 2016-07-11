@@ -12,7 +12,6 @@ function accept(req, res) {
 	file.serve(req, res);
 }
 
-// ------ запустить сервер -------
 
 if (!module.parent) {
 	http.createServer(accept).listen(8081);

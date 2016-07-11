@@ -6,37 +6,7 @@
 <head>
     <meta charset="utf-8">
 </head>
-<style>
-#Wrapp {
-    opacity: 1;
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, .8);
-    z-index: 10000;
-}
 
-#tt{
-
-    width: 50%;
-    height: 75%;
-    margin: 50px auto auto auto;
-    background-color: #7f8c8d;
-    position: relative;
-    padding: 30px;
-    border: whitesmoke solid 1px;
-}
-button.close {
-    cursor: pointer;
-    position: absolute;
-    color: darkblue;
-    padding:0px 10px;
-    right: 2%;
-    top: 2%;
-}
-</style>
 <body background="src/assets/White-Background-9B1.jpg">
 
 <link rel="stylesheet" type="text/css" href="stylesheet.css">
@@ -80,8 +50,6 @@ button.close {
         }
     };
 
-//
-//    <a href="#%(product_id)s" onClick="removeItem(this)">X</a>
 
  function removeItem(element) {
      var product_id = element.hash.substring(1);
@@ -109,7 +77,7 @@ button.close {
 <script>
     function openPopup(popupId) {
         var popup = document.getElementById(popupId);
-//        if (Cart.count() == 0) return false;
+        if (Cart.count() == 0) return false;
         popup.style.display = 'block';
     }
 
@@ -126,6 +94,9 @@ button.close {
     function decProduct(element) {
         var qty = element.parentNode.querySelector('.qty');
         qty.value = parseInt(qty.value) - 1;
+        if (qty.value < 0){
+            qty.value = 0;
+        }
     };
 
     function buyItem(productInfo, qtyEl) {
@@ -182,14 +153,23 @@ button.close {
     }
 
     loadProducts();
+
+    function purchase(popupId) {
+        var popup = document.getElementById(popupId);
+        popup.style.display = 'none';
+        renderHeaderCart(0);
+        loadProducts();
+    }
 </script>
 
 <div id="Main">
 
     <div id="Wrapp" style="display:none">
-        <div id='tt'><button class="close" onclick="closePopup('Wrapp')">X</button>
+        <div id='tt'>
+            <button class="close" onclick="closePopup('Wrapp')">X</button>
             <table id="cart-list"></table>
-            <div id="total-header" align="right"></div>
+            <div class="total" id="total-header"></div>
+            <button  onclick="purchase('Wrapp')">Buy</button>
         </div>
     </div>
 
@@ -199,14 +179,13 @@ button.close {
         <img src="cart.png" height="4%" width="4%" onclick="openPopup('Wrapp'); return false;">
     </h3> <hr>
     <div class="filter">
-        <center>
-            <input type="text" id="search" value="">
-            <button onclick="searchByName(search.value); return false;">Search</button>
-            <select onchange="sortBy(this.value)">
+
+            <input class="search_input" type="text" id="search" value="">
+            <button class="search_button" onclick="searchByName(search.value); return false;">Search</button>
+            <select class="filter_by" onchange="sortBy(this.value)">
                 <option value="price">Price</option>
                 <option value="name">Name</option>
             </select>
-        </center>
     </div>
     <div id="products-list"></div>
 
@@ -219,10 +198,10 @@ button.close {
     </center>
     <div>
         <div><label>Quantity: </label><input id="qty%(id)s" class="qty" type="text" value="0" readonly /></label></div>
-        <button onclick="incProduct(this)">+</button>
-        <button onclick="decProduct(this)">-</button>
+        <button class="ss" onclick="incProduct(this)">+</button>
+        <button class="ss" onclick="decProduct(this)">-</button>
     </div>
-    <button onclick='buyItem(%(productInfo)s, qty%(id)s); return false;'>Buy</button>
+    <button class="buy" onclick='buyItem(%(productInfo)s, qty%(id)s); return false;'>Buy</button>
 </script>
 
 <script id="cart-items" type="custom/template">
@@ -347,11 +326,3 @@ button.close {
 </body>
 
 </html>
-
-<!--popup + show and hide popup -->
-<!--search,  filter, order -->
-
-
-
-<!--concat array(products) -->
-<!--renderer  search,  filter, order -->

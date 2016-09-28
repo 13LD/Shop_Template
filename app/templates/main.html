@@ -1,205 +1,77 @@
-
-
 <!DOCTYPE HTML>
 <html>
-
 <head>
     <meta charset="utf-8">
+    <title>Shop</title>
+    <link rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
 </head>
 
-<body background="src/assets/White-Background-9B1.jpg">
+<body>
 
-<link rel="stylesheet" type="text/css" href="stylesheet.css">
+<script src="../src/cart.js"></script>
 
-<script>
-    var Cart = {
-        _items: {},
-        _subscribers: [],
+<script src="../src/popup.js"></script>
 
-        add: function(product, qty) {
-            if (Cart._items[product.id]) {
-                Cart._items[product.id].qty += qty;
-            } else {
-                var prodInfo = JSON.parse(JSON.stringify(product));
-                prodInfo.qty = qty;
-                Cart._items[product.id] = prodInfo;
-            }
-            Cart._subscribers.forEach(function(func) { func(Cart); });
-        },
-        remove: function(product_id) {
-            delete Cart._items[product_id];
-            Cart._subscribers.forEach(function(func) { func(Cart); });
-        },
-        count: function() {
-            return Object.keys(Cart._items).reduce(function(i1, i2) {
-                return i1 + Cart._items[i2].qty;
-            }, 0);
-        },
-        total: function() {
-            return Object.keys(Cart._items).reduce(function(i1, i2) {
-                return i1 + Cart._items[i2].qty * Cart._items[i2].price;
-            }, 0);
-        },
-        getItems: function () {
-            return Object.keys(Cart._items).map(function(productId) {
-                return Cart._items[productId];
-            });
-        },
-        subscribe: function(renderer) {
-            Cart._subscribers.push(renderer);
-        }
-    };
+<script src="../src/main_functions.js"></script>
 
-
- function removeItem(element) {
-     var product_id = element.hash.substring(1);
-     Cart.remove(product_id);
- }
-
-
-    Cart.subscribe(function(cart) {
-        renderCart(cart.getItems());
-        if (cart.count() == 0) {
-            closePopup('Wrapp');
-        }
-    });
-
-    Cart.subscribe(function (cart) {
-        renderHeaderCart(cart.count());
-
-    })
-
-    Cart.subscribe(function (cart) {
-        totalCart(cart.total());
-    })
-</script>
-
-<script>
-    function openPopup(popupId) {
-        var popup = document.getElementById(popupId);
-        if (Cart.count() == 0) return false;
-        popup.style.display = 'block';
-    }
-
-    function closePopup(popupId) {
-        var popup = document.getElementById(popupId);
-        popup.style.display = 'none';
-    }
-</script>
-<script>
-    function incProduct(element) {
-        var qty = element.parentNode.querySelector('.qty');
-        qty.value = parseInt(qty.value) + 1;
-    };
-    function decProduct(element) {
-        var qty = element.parentNode.querySelector('.qty');
-        qty.value = parseInt(qty.value) - 1;
-        if (qty.value < 0){
-            qty.value = 0;
-        }
-    };
-
-    function buyItem(productInfo, qtyEl) {
-        var qty = parseInt(qtyEl.value) || 0;
-        Cart.add(productInfo, qty);
-        qtyEl.value = 0;
-    }
-
-    function loadProducts() {
-        var xhr = new XMLHttpRequest();
-
-        xhr.open('GET', 'http://localhost:8081/products.json', true);
-        xhr.onreadystatechange = function (e) {
-            if(this.readyState == 4 && this.status < 400){
-                window.products =  JSON.parse(xhr.responseText);
-                render(window.products);
-            }
-        };
-        xhr.send();
-    }
-
-    function searchByName(q) {
-        if (q.length == 0) {
-            render(window.products);
-            return false;
-        }
-        if (q.length < 2) return false;
-        var products = window.products.filter(function (product) {
-            return product.display_name.indexOf(q) > -1;
-        });
-        render(products);
-    }
-    function sortByPrice() {
-        return window.products.concat([]).sort(function (a, b) {
-            return a.price - b.price;
-        });
-    }
-
-    function  sortByName() {
-        return window.products.concat([]).sort(function (a, b) {
-            return a.display_name.toLowerCase().localeCompare(b.display_name.toLowerCase());
-        });
-    }
-
-    function sortBy(by) {
-        var sorters = {
-            'price': sortByPrice,
-            'name': sortByName
-        };
-        if (sorters[by]) {
-            var products = sorters[by]();
-            render(products);
-        }
-    }
-
-    loadProducts();
-
-    function purchase(popupId) {
-        var popup = document.getElementById(popupId);
-        popup.style.display = 'none';
-        renderHeaderCart(0);
-        loadProducts();
-    }
-</script>
-
-<div id="Main">
-
-    <div id="Wrapp" style="display:none">
-        <div id='tt'>
-            <button class="close" onclick="closePopup('Wrapp')">X</button>
-            <table id="cart-list"></table>
-            <div class="total" id="total-header"></div>
-            <button  onclick="purchase('Wrapp')">Buy</button>
-        </div>
+<div class="container">
+    <div class="site-container">
+        <div class="site-pusher">
+            <header class="header">
+                <a href="#" class="header__icon" id="header__icon"></a>
+                <a href="#" class="header__logo">
+                    Pokemon
+                    <img src="../images/i-site-logo_icon.png" height="60px" width="60px">
+                </a>
+                <nav class="menu">
+                    <a href="index.html">Home</a>
+                    <a href="main.html">Products</a>
+                    <a href="#">Info</a>
+                    <a href="contacts.html">Contact</a>
+                </nav>
+                <!--<a href="#" class="btn btn-info btn-lg">-->
+                    <!--<span class="glyphicon glyphicon-shopping-cart"></span> Shopping Cart-->
+                <!--</a>-->
+                <!--<button type="button" class="btn btn-default btn-sm"  >-->
+                    <!--<span class="glyphicon glyphicon-shopping-cart"></span> Shopping Cart-->
+                <!--</button>-->
+                <p style="float: right">
+                    <img style="float: right" src="../images/cart.png" height="60px" width="60px" onclick="openPopup('Wrapp'); return false;">
+                </p>
+            </header>
+        <div class="site-cache" id="site-cache"></div>
+        </div> <!-- END site-pusher -->
     </div>
-
-
-    <h3>Awesome Shopping Cart
-        <div id="cart-header" align="right"></div>
-        <img src="cart.png" height="4%" width="4%" onclick="openPopup('Wrapp'); return false;">
-    </h3> <hr>
-    <div class="filter">
-
-            <input class="search_input" type="text" id="search" value="">
-            <button class="search_button" onclick="searchByName(search.value); return false;">Search</button>
-            <select class="filter_by" onchange="sortBy(this.value)">
+        <div id="Wrapp" style="display:none">
+            <div id='tt'>
+                <button class="close" onclick="closePopup('Wrapp')">X</button>
+                <table id="cart-list"></table>
+                <div class="total" id="total-header"></div>
+                <button  onclick="purchase('Wrapp')">Buy</button>
+            </div>
+        </div>
+    <div class="filter" style="margin-top: 10%">
+            <input class="search_input" type="search" id="search" value="" oninput="searchByName(search.value); return false;">
+            <select class="form-control" style="float: right" onchange="sortBy(this.value)">
                 <option value="price">Price</option>
                 <option value="name">Name</option>
             </select>
+
     </div>
     <div id="products-list"></div>
 
-
-<script id="product-template" type="custom/template">
+    <script id="product-template" type="custom/template">
     <h3>%(display_name)s</h3>
-    <img src="%(image)s" height="10%" width="10%">
+    <img src="%(image)s" height="100%" width="100%">
     <center>
         <p>%(price)s $</p>
     </center>
     <div>
-        <div><label>Quantity: </label><input id="qty%(id)s" class="qty" type="text" value="0" readonly /></label></div>
-        <button class="ss" onclick="incProduct(this)">+</button>
-        <button class="ss" onclick="decProduct(this)">-</button>
+        <div class="row"><label>Quantity: </label><input style="max-width: 70%" id="qty%(id)s" class="qty" type="text" value="0" readonly /></label></div>
+        <a style="max-width: 25%; max-height: 5%" class="btn btn-lg btn-light text-center" onclick="incProduct(this)">+</a>
+        <a style="max-width: 25%; max-height: 5%" class="btn btn-lg btn-dark text-center" onclick="decProduct(this)">-</a>
     </div>
     <button class="buy" onclick='buyItem(%(productInfo)s, qty%(id)s); return false;'>Buy</button>
 </script>
@@ -222,104 +94,15 @@
     </td>
 </script>
 
-<script>
-    function totalCart(total) {
-        var context = {
-            total: total
-        };
-        var el = document.createElement('div');
-        var template = document.getElementById('total');
-        el.innerHTML = template.textContent.replace(/%\((.+?)\)s/gm, function(str, p1) {
-            if (context.hasOwnProperty(p1)) {
-                return context[p1];
-            }
-            return str;
-        });
-        var content = document.getElementById('total-header');
+<script src="../src/total_cart.js"></script>
 
-        content.innerHTML = '';
-        content.appendChild(el);
-    }
-</script>
-<script>
-    function renderHeaderCart(count) {
-        var context = {
-            qty: count
-        };
-        var el = document.createElement('div');
-        var template = document.getElementById('cart-items');
-        el.innerHTML = template.textContent.replace(/%\((.+?)\)s/gm, function(str, p1) {
-            if (context.hasOwnProperty(p1)) {
-                return context[p1];
-            }
-            return str;
-        });
-        var content = document.getElementById('cart-header');
+<script src="../src/render_header_cart.js"></script>
 
-        content.innerHTML = '';
-        content.appendChild(el);
-    }
-    renderHeaderCart(0);
-</script>
+<script src="../src/render_cart.js"></script>
 
-<script>
-
-    function renderCart(products) {
-        var frag = document.createDocumentFragment();
-        var template = document.getElementById('cart-item-template');
-        products.forEach(function (product) {
-            var el = document.createElement('tr');
-            el.innerHTML = template.textContent.replace(/%\((.+?)\)s/gm, function(str, p1) {
-                if (product.hasOwnProperty(p1)) {
-                    return product[p1];
-                }
-                return str;
-            });
-            frag.appendChild(el)
-        });
-        var content = document.getElementById('cart-list');
-
-        var thead = [
-            '<tr>',
-                '<th>Product</th>',
-                '<th>Quantity</th>',
-                '<th>Price</th>',
-                '<th></th>',
-            '</tr>',
-        ].join('');
-        content.innerHTML = thead;
-        content.appendChild(frag);
-    }
-</script>
-
-<script>
-
-    function render(products) {
-        var frag = document.createDocumentFragment();
-        var template = document.getElementById('product-template');
-        products.forEach(function (product) {
-            var el = document.createElement('div');
-            el.className = 'col col-3 product-item';
-            var context = JSON.parse(JSON.stringify(product));
-            context.productInfo = JSON.stringify(product);
-            el.innerHTML = template.textContent.replace(/%\((.+?)\)s/gm, function(str, p1) {
-                if (context.hasOwnProperty(p1)) {
-                    return context[p1];
-                }
-                return str;
-            });
-            frag.appendChild(el);
-        });
-        var content = document.getElementById('products-list');
-
-        content.innerHTML = '';
-        content.appendChild(frag);
-    }
-</script>
+<script src="../src/render_products.js"></script>
 
 </div>
-
-
 
 
 
